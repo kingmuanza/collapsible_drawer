@@ -6,6 +6,25 @@ class CollapsibleDrawer extends StatelessWidget {
   final VoidCallback onToggle;
   final int selectedIndex;
   final List<SideItem> items;
+  final Color? backgroundColor;
+  final Color? activeItemColor;
+  final Color? inactiveIconColor;
+  final Color? helpButtonColor;
+  final Color? profileTileColor;
+  final Color? badgeColor;
+  final String? title;
+  final TextStyle? titleStyle;
+  final Widget? logo;
+  final String? profileName;
+  final String? profileInitial;
+  final Widget? profileAvatar;
+  final bool showProfileSettings;
+  final double? expandedWidth;
+  final double? collapsedWidth;
+  final Duration? animationDuration;
+  final Curve? animationCurve;
+  final VoidCallback? onHelpTap;
+  final VoidCallback? onProfileSettingsTap;
 
   const CollapsibleDrawer({
     super.key,
@@ -13,20 +32,46 @@ class CollapsibleDrawer extends StatelessWidget {
     required this.onToggle,
     required this.selectedIndex,
     required this.items,
+    this.backgroundColor,
+    this.activeItemColor,
+    this.inactiveIconColor,
+    this.helpButtonColor,
+    this.profileTileColor,
+    this.badgeColor,
+    this.title,
+    this.titleStyle,
+    this.logo,
+    this.profileName,
+    this.profileInitial,
+    this.profileAvatar,
+    this.showProfileSettings = true,
+    this.expandedWidth,
+    this.collapsedWidth,
+    this.animationDuration,
+    this.animationCurve,
+    this.onHelpTap,
+    this.onProfileSettingsTap,
   });
 
-  static const double expandedWidth = 280;
-  static const double collapsedWidth = 60;
 
   @override
   Widget build(BuildContext context) {
-    final bg = const Color(0xFF1D1230); // violet sombre
-    final active = const Color(0xFF5CCB7D); // vert sélectionné (exemple)
+    final bg = backgroundColor ?? const Color(0xFF1D1230);
+    final active = activeItemColor ?? const Color(0xFF5CCB7D);
+    final inactiveIcon = inactiveIconColor ?? Colors.white70;
+    final helpColor = helpButtonColor ?? const Color(0xFF3A1C5A);
+    final profileColor = profileTileColor ?? Colors.white.withOpacity(0.08);
+    final badge = badgeColor ?? Colors.lightBlueAccent;
+
+    final double expandedW = expandedWidth ?? 280;
+    final double collapsedW = collapsedWidth ?? 60;
+    final Duration animDuration = animationDuration ?? const Duration(milliseconds: 220);
+    final Curve animCurve = animationCurve ?? Curves.easeOut;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOut,
-      width: isExpanded ? expandedWidth : collapsedWidth,
+      duration: animDuration,
+      curve: animCurve,
+      width: isExpanded ? expandedW : collapsedW,
       decoration: BoxDecoration(
         color: bg,
         boxShadow: [
@@ -41,12 +86,12 @@ class CollapsibleDrawer extends StatelessWidget {
               children: [
                 Expanded(child: Container()),
                 SizedBox(
-                  width: collapsedWidth,
+                  width: collapsedW,
                   child: IconButton(
                     onPressed: onToggle,
                     icon: Icon(
                       isExpanded ? Icons.chevron_left : Icons.menu,
-                      color: Colors.white70,
+                      color: inactiveIcon,
                     ),
                   ),
                 ),
@@ -56,15 +101,17 @@ class CollapsibleDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: Row(
                 children: [
-                  Center(child: const FlutterLogo(size: 28)),
-                  if (isExpanded) ...[
+                  Center(
+                    child: logo ?? const FlutterLogo(size: 28),
+                  ),
+                  if (isExpanded && title != null) ...[
                     const SizedBox(width: 10),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        "SIAPARTY",
+                        title!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: titleStyle ?? const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -95,6 +142,8 @@ class CollapsibleDrawer extends StatelessWidget {
                     badge: item.badge,
                     isActive: isActive,
                     activeColor: active,
+                    inactiveIconColor: inactiveIcon,
+                    badgeColor: badge,
                     onTap: item.onTap,
                   );
                 },
@@ -106,9 +155,22 @@ class CollapsibleDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 24),
               child: Column(
                 children: [
-                  _RoundIconButton(icon: Icons.help_outline, onTap: () {}),
+                  _RoundIconButton(
+                    icon: Icons.help_outline,
+                    onTap: onHelpTap ?? () {},
+                    backgroundColor: helpColor,
+                    iconColor: Colors.white,
+                  ),
                   const SizedBox(height: 100),
-                  _ProfileTile(isExpanded: isExpanded),
+                  _ProfileTile(
+                    isExpanded: isExpanded,
+                    backgroundColor: profileColor,
+                    profileName: profileName,
+                    profileInitial: profileInitial,
+                    profileAvatar: profileAvatar,
+                    showSettings: showProfileSettings,
+                    onSettingsTap: onProfileSettingsTap,
+                  ),
                 ],
               ),
             ),
@@ -126,6 +188,8 @@ class _SideTile extends StatelessWidget {
   final int? badge;
   final bool isActive;
   final Color activeColor;
+  final Color inactiveIconColor;
+  final Color badgeColor;
   final VoidCallback onTap;
 
   const _SideTile({
@@ -134,6 +198,8 @@ class _SideTile extends StatelessWidget {
     required this.label,
     required this.isActive,
     required this.activeColor,
+    required this.inactiveIconColor,
+    required this.badgeColor,
     required this.onTap,
     this.badge,
   });
@@ -169,7 +235,7 @@ class _SideTile extends StatelessWidget {
                     Center(
                       child: Icon(
                         icon,
-                        color: isActive ? Colors.white : Colors.white70,
+                        color: isActive ? Colors.white : inactiveIconColor,
                         size: 28,
                       ),
                     ),
@@ -183,7 +249,7 @@ class _SideTile extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.lightBlueAccent,
+                            color: badgeColor,
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
@@ -213,21 +279,28 @@ class _SideTile extends StatelessWidget {
 class _RoundIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final Color backgroundColor;
+  final Color iconColor;
 
-  const _RoundIconButton({required this.icon, required this.onTap});
+  const _RoundIconButton({
+    required this.icon,
+    required this.onTap,
+    required this.backgroundColor,
+    required this.iconColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFF3A1C5A),
+      color: backgroundColor,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
-        child: const SizedBox(
+        child: SizedBox(
           width: 40,
           height: 40,
-          child: Icon(Icons.help_outline, color: Colors.white),
+          child: Icon(icon, color: iconColor),
         ),
       ),
     );
@@ -236,7 +309,22 @@ class _RoundIconButton extends StatelessWidget {
 
 class _ProfileTile extends StatelessWidget {
   final bool isExpanded;
-  const _ProfileTile({required this.isExpanded});
+  final Color backgroundColor;
+  final String? profileName;
+  final String? profileInitial;
+  final Widget? profileAvatar;
+  final bool showSettings;
+  final VoidCallback? onSettingsTap;
+  
+  const _ProfileTile({
+    required this.isExpanded,
+    required this.backgroundColor,
+    this.profileName,
+    this.profileInitial,
+    this.profileAvatar,
+    this.showSettings = true,
+    this.onSettingsTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -244,33 +332,37 @@ class _ProfileTile extends StatelessWidget {
       height: 58,
       padding: const EdgeInsets.symmetric(horizontal: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         children: [
-          CircleAvatar(
+          profileAvatar ?? CircleAvatar(
             radius: 18,
             backgroundColor: Colors.white.withOpacity(0.15),
-            child: const Text("K", style: TextStyle(color: Colors.white)),
+            child: Text(
+              profileInitial ?? "U",
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
           if (isExpanded) ...[
             const SizedBox(width: 10),
-            const Expanded(
+            Expanded(
               child: Text(
-                "kangudie muanza",
+                profileName ?? "User",
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.settings, color: Colors.white70),
-            ),
+            if (showSettings)
+              IconButton(
+                onPressed: onSettingsTap ?? () {},
+                icon: Icon(Icons.settings, color: Colors.white.withOpacity(0.7)),
+              ),
           ],
         ],
       ),

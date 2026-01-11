@@ -25,6 +25,8 @@ class CollapsibleDrawer extends StatelessWidget {
   final Curve? animationCurve;
   final VoidCallback? onHelpTap;
   final VoidCallback? onProfileSettingsTap;
+  final double? paddingTop;
+  final bool? showHelpButton;
 
   const CollapsibleDrawer({
     super.key,
@@ -51,8 +53,9 @@ class CollapsibleDrawer extends StatelessWidget {
     this.animationCurve,
     this.onHelpTap,
     this.onProfileSettingsTap,
+    this.paddingTop,
+    this.showHelpButton,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +68,11 @@ class CollapsibleDrawer extends StatelessWidget {
 
     final double expandedW = expandedWidth ?? 280;
     final double collapsedW = collapsedWidth ?? 60;
-    final Duration animDuration = animationDuration ?? const Duration(milliseconds: 220);
+    final Duration animDuration =
+        animationDuration ?? const Duration(milliseconds: 220);
     final Curve animCurve = animationCurve ?? Curves.easeOut;
+    final double topPadding = paddingTop ?? 0;
+    final bool helpButtonShowed = showHelpButton ?? true;
 
     return AnimatedContainer(
       duration: animDuration,
@@ -81,29 +87,32 @@ class CollapsibleDrawer extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            // HEADER
-            Row(
-              children: [
-                Expanded(child: Container()),
-                SizedBox(
-                  width: collapsedW,
-                  child: IconButton(
-                    onPressed: onToggle,
-                    icon: Icon(
-                      isExpanded ? Icons.chevron_left : Icons.menu,
-                      color: inactiveIcon,
+            Container(
+              padding: EdgeInsets.only(top: topPadding),
+              color: Colors.red,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(child: Container()),
+                  SizedBox(
+                    width: collapsedW,
+                    child: IconButton(
+                      onPressed: onToggle,
+                      icon: Icon(
+                        isExpanded ? Icons.chevron_left : Icons.menu,
+                        color: inactiveIcon,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: Row(
                 children: [
-                  Center(
-                    child: logo ?? const FlutterLogo(size: 28),
-                  ),
+                  Center(child: logo ?? const FlutterLogo(size: 28)),
                   if (isExpanded && title != null) ...[
                     const SizedBox(width: 10),
                     Expanded(
@@ -111,11 +120,13 @@ class CollapsibleDrawer extends StatelessWidget {
                         title!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: titleStyle ?? const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
+                        style:
+                            titleStyle ??
+                            const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
                       ),
                     ),
                   ],
@@ -155,13 +166,14 @@ class CollapsibleDrawer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 24),
               child: Column(
                 children: [
-                  _RoundIconButton(
-                    icon: Icons.help_outline,
-                    onTap: onHelpTap ?? () {},
-                    backgroundColor: helpColor,
-                    iconColor: Colors.white,
-                  ),
-                  const SizedBox(height: 100),
+                  if (helpButtonShowed == true)
+                    _RoundIconButton(
+                      icon: Icons.help_outline,
+                      onTap: onHelpTap ?? () {},
+                      backgroundColor: helpColor,
+                      iconColor: Colors.white,
+                    ),
+                  const SizedBox(height: 16),
                   _ProfileTile(
                     isExpanded: isExpanded,
                     backgroundColor: profileColor,
@@ -226,6 +238,8 @@ class _SideTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
                 width: 44,
@@ -315,7 +329,7 @@ class _ProfileTile extends StatelessWidget {
   final Widget? profileAvatar;
   final bool showSettings;
   final VoidCallback? onSettingsTap;
-  
+
   const _ProfileTile({
     required this.isExpanded,
     required this.backgroundColor,
@@ -336,15 +350,18 @@ class _ProfileTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          profileAvatar ?? CircleAvatar(
-            radius: 18,
-            backgroundColor: Colors.white.withOpacity(0.15),
-            child: Text(
-              profileInitial ?? "U",
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
+          profileAvatar ??
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.white.withOpacity(0.15),
+                child: Text(
+                  profileInitial ?? "U",
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
           if (isExpanded) ...[
             const SizedBox(width: 10),
             Expanded(
@@ -361,7 +378,10 @@ class _ProfileTile extends StatelessWidget {
             if (showSettings)
               IconButton(
                 onPressed: onSettingsTap ?? () {},
-                icon: Icon(Icons.settings, color: Colors.white.withOpacity(0.7)),
+                icon: Icon(
+                  Icons.settings,
+                  color: Colors.white.withOpacity(0.7),
+                ),
               ),
           ],
         ],

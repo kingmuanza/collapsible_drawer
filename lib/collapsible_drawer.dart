@@ -27,6 +27,7 @@ class CollapsibleDrawer extends StatelessWidget {
   final VoidCallback? onProfileSettingsTap;
   final double? paddingTop;
   final bool? showHelpButton;
+  final bool? showLogoButton;
 
   const CollapsibleDrawer({
     super.key,
@@ -55,6 +56,7 @@ class CollapsibleDrawer extends StatelessWidget {
     this.onProfileSettingsTap,
     this.paddingTop,
     this.showHelpButton,
+    this.showLogoButton,
   });
 
   @override
@@ -73,6 +75,7 @@ class CollapsibleDrawer extends StatelessWidget {
     final Curve animCurve = animationCurve ?? Curves.easeOut;
     final double topPadding = paddingTop ?? 0;
     final bool helpButtonShowed = showHelpButton ?? true;
+    final bool logoButtonShowed = showLogoButton ?? true;
 
     return AnimatedContainer(
       duration: animDuration,
@@ -89,7 +92,7 @@ class CollapsibleDrawer extends StatelessWidget {
           children: [
             Container(
               padding: EdgeInsets.only(top: topPadding),
-              color: Colors.red,
+              // color: Colors.red,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -108,31 +111,35 @@ class CollapsibleDrawer extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: Row(
-                children: [
-                  Center(child: logo ?? const FlutterLogo(size: 28)),
-                  if (isExpanded && title != null) ...[
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        title!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style:
-                            titleStyle ??
-                            const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
+            if (logoButtonShowed)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
+                child: Row(
+                  children: [
+                    Center(child: logo ?? const FlutterLogo(size: 28)),
+                    if (isExpanded && title != null) ...[
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          title!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              titleStyle ??
+                              const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                              ),
+                        ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
 
             const SizedBox(height: 60),
 

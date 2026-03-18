@@ -28,6 +28,7 @@ class CollapsibleDrawer extends StatelessWidget {
   final double? paddingTop;
   final bool? showHelpButton;
   final bool? showLogoButton;
+  final double? menuTopSpacing;
 
   const CollapsibleDrawer({
     super.key,
@@ -57,6 +58,7 @@ class CollapsibleDrawer extends StatelessWidget {
     this.paddingTop,
     this.showHelpButton,
     this.showLogoButton,
+    this.menuTopSpacing,
   });
 
   @override
@@ -76,6 +78,7 @@ class CollapsibleDrawer extends StatelessWidget {
     final double topPadding = paddingTop ?? 0;
     final bool helpButtonShowed = showHelpButton ?? true;
     final bool logoButtonShowed = showLogoButton ?? true;
+    final double menuSpacing = menuTopSpacing ?? 60;
 
     return AnimatedContainer(
       duration: animDuration,
@@ -141,7 +144,7 @@ class CollapsibleDrawer extends StatelessWidget {
                 ),
               ),
 
-            const SizedBox(height: 60),
+            SizedBox(height: menuSpacing),
 
             // LISTE MENU
             Expanded(

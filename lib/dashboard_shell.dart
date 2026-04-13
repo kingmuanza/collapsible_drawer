@@ -27,6 +27,7 @@ class _DashboardShellState extends State<DashboardShell> {
         icon: Icons.send,
         label: "Campaigns",
         onTap: () => setState(() => selectedIndex = 0),
+        withDivider: true,
       ),
       SideItem(
         icon: Icons.bar_chart,
@@ -38,7 +39,7 @@ class _DashboardShellState extends State<DashboardShell> {
         label: "Audiences",
         onTap: () => setState(() => selectedIndex = 2),
       ),
-      SideItem(icon: Icons.settings, label: "Settings", onTap: () {}, isDivider: true),
+      SideItem(icon: Icons.settings, label: "Settings", onTap: () {}, withDivider: true),
       SideItem(
         icon: Icons.inbox,
         label: "Inbox",

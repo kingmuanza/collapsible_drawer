@@ -164,18 +164,8 @@ class CollapsibleDrawer extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final item = items[i];
                   final isActive = i == selectedIndex;
-                  final isDivider = item.isDivider;
-                  if (isDivider) {
-                    return Container(
-                      height: dividerHeight ?? 0.5,
-                      color: dividerColor ?? Colors.white.withOpacity(0.2),
-                      width: double.infinity,
-                      margin: EdgeInsets.symmetric(
-                        horizontal: dividerMarginHorizontal ?? 2,
-                        vertical: dividerMarginVertical ?? 4,
-                      ),
-                    );
-                  }
+                  final withDivider = item.withDivider;
+                  
 
                   return _SideTile(
                     isExpanded: isExpanded,
@@ -187,6 +177,7 @@ class CollapsibleDrawer extends StatelessWidget {
                     inactiveIconColor: inactiveIcon,
                     badgeColor: badge,
                     onTap: item.onTap,
+                    withDivider: withDivider,
                   );
                 },
               ),
@@ -235,6 +226,11 @@ class _SideTile extends StatelessWidget {
   final Color inactiveIconColor;
   final Color badgeColor;
   final VoidCallback onTap;
+  final bool withDivider;
+  final double? dividerHeight;
+  final Color? dividerColor;
+  final double? dividerMarginHorizontal;
+  final double? dividerMarginVertical;
 
   const _SideTile({
     required this.isExpanded,
@@ -246,6 +242,11 @@ class _SideTile extends StatelessWidget {
     required this.badgeColor,
     required this.onTap,
     this.badge,
+    this.withDivider = false,
+    this.dividerHeight,
+    this.dividerColor,
+    this.dividerMarginHorizontal,
+    this.dividerMarginVertical,
   });
 
   @override
@@ -261,61 +262,75 @@ class _SideTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
-        child: Container(
-          height: 48,
-          width: isExpanded ? 200 : 48,
-          // padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: isActive ? activeColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 44,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Center(
-                      child: Icon(
-                        icon,
-                        color: isActive ? Colors.white : inactiveIconColor,
-                        size: 28,
-                      ),
-                    ),
-                    if (badge != null && badge! > 0)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: badgeColor,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            "$badge",
-                            style: const TextStyle(
-                              fontSize: 8,
-                              color: Colors.white,
-                            ),
+        child: Column(
+          children: [
+            Container(
+              height: 48,
+              width: isExpanded ? 200 : 48,
+              // padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: isActive ? activeColor : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 44,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Center(
+                          child: Icon(
+                            icon,
+                            color: isActive ? Colors.white : inactiveIconColor,
+                            size: 28,
                           ),
                         ),
-                      ),
+                        if (badge != null && badge! > 0)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: badgeColor,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                "$badge",
+                                style: const TextStyle(
+                                  fontSize: 8,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (isExpanded) ...[
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(label, style: baseText)),
                   ],
+                ],
+              ),
+            ),
+            if (withDivider)
+              Container(
+                height: dividerHeight ?? 0.5,
+                color: dividerColor ?? Colors.white.withOpacity(0.2),
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(
+                  horizontal: dividerMarginHorizontal ?? 2,
+                  vertical: dividerMarginVertical ?? 4,
                 ),
               ),
-              if (isExpanded) ...[
-                const SizedBox(width: 12),
-                Expanded(child: Text(label, style: baseText)),
-              ],
-            ],
-          ),
+          ],
         ),
       ),
     );

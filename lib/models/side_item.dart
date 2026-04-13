@@ -5,23 +5,13 @@ class SideItem {
   final String label;
   final int? badge;
   final VoidCallback onTap;
-  final bool isDivider;
+  final bool withDivider;
 
   SideItem({
     required this.icon,
     required this.label,
     required this.onTap,
     this.badge,
-    this.isDivider = false,
-  });
-}
-
-class SideItemDivider {
-  final int? height;
-  final Color? color;
-
-  SideItemDivider({
-    this.height,
-    this.color,
+    this.withDivider = false,
   });
 }

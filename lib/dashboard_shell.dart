@@ -38,6 +38,7 @@ class _DashboardShellState extends State<DashboardShell> {
         label: "Audiences",
         onTap: () => setState(() => selectedIndex = 2),
       ),
+      SideItem(icon: Icons.settings, label: "Settings", onTap: () {}, isDivider: true),
       SideItem(
         icon: Icons.inbox,
         label: "Inbox",
@@ -56,6 +57,8 @@ class _DashboardShellState extends State<DashboardShell> {
             items: items,
             title: "MySiaParty",
             paddingTop: 50,
+            profileTileShowed: true,
+            showProfileSettings: true,
           ),
           Expanded(child: pages[selectedIndex]),
         ],

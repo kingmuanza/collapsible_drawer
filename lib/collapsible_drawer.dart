@@ -29,6 +29,11 @@ class CollapsibleDrawer extends StatelessWidget {
   final bool? showHelpButton;
   final bool? showLogoButton;
   final double? menuTopSpacing;
+  final double? dividerHeight;
+  final Color? dividerColor;
+  final double? dividerMarginHorizontal;
+  final double? dividerMarginVertical;
+  final bool? profileTileShowed;
 
   const CollapsibleDrawer({
     super.key,
@@ -59,6 +64,11 @@ class CollapsibleDrawer extends StatelessWidget {
     this.showHelpButton,
     this.showLogoButton,
     this.menuTopSpacing,
+    this.dividerHeight,
+    this.dividerColor,
+    this.dividerMarginHorizontal,
+    this.dividerMarginVertical,
+    this.profileTileShowed = true,
   });
 
   @override
@@ -79,7 +89,6 @@ class CollapsibleDrawer extends StatelessWidget {
     final bool helpButtonShowed = showHelpButton ?? true;
     final bool logoButtonShowed = showLogoButton ?? true;
     final double menuSpacing = menuTopSpacing ?? 60;
-
     return AnimatedContainer(
       duration: animDuration,
       curve: animCurve,
@@ -155,6 +164,18 @@ class CollapsibleDrawer extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final item = items[i];
                   final isActive = i == selectedIndex;
+                  final isDivider = item.isDivider;
+                  if (isDivider) {
+                    return Container(
+                      height: dividerHeight ?? 0.5,
+                      color: dividerColor ?? Colors.white.withOpacity(0.2),
+                      width: double.infinity,
+                      margin: EdgeInsets.symmetric(
+                        horizontal: dividerMarginHorizontal ?? 2,
+                        vertical: dividerMarginVertical ?? 4,
+                      ),
+                    );
+                  }
 
                   return _SideTile(
                     isExpanded: isExpanded,
@@ -184,15 +205,16 @@ class CollapsibleDrawer extends StatelessWidget {
                       iconColor: Colors.white,
                     ),
                   const SizedBox(height: 16),
-                  _ProfileTile(
-                    isExpanded: isExpanded,
-                    backgroundColor: profileColor,
-                    profileName: profileName,
-                    profileInitial: profileInitial,
-                    profileAvatar: profileAvatar,
-                    showSettings: showProfileSettings,
-                    onSettingsTap: onProfileSettingsTap,
-                  ),
+                  if (profileTileShowed == true)
+                    _ProfileTile(
+                      isExpanded: isExpanded,
+                      backgroundColor: profileColor,
+                      profileName: profileName,
+                      profileInitial: profileInitial,
+                      profileAvatar: profileAvatar,
+                      showSettings: showProfileSettings,
+                      onSettingsTap: onProfileSettingsTap,
+                    ),
                 ],
               ),
             ),
